@@ -1,0 +1,12 @@
+{
+  "name": "TekMotorDeneme V2",
+  "short_name": "TekMotorV2",
+  "description": "Çevrimdışı PWA robot el kontrol ve canlı PID analiz arayüzü",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#0b1120",
+  "icons": [
+    { "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
