@@ -68,7 +68,7 @@ const btnSaveFlash = document.getElementById("btnSaveFlash");
 const btnStepTest = document.getElementById("btnStepTest");
 const btnStepTestNeg = document.getElementById("btnStepTestNeg");
 const btnExportCsv = document.getElementById("btnExportCsv");
-const btnClearPlot = document.getElementById("btnClearPlot");
+const btnClearPlot = document.getElementById("btnCl const btnRecStart = document.getElementById("btnRecStart"); const btnRecStop = document.getElementById("btnRecStop"); const recStatus = document.getElementById("recStatus");earPlot");
 
 const wsUrlInput = document.getElementById("wsUrlInput");
 const chkAutoReconnect = document.getElementById("chkAutoReconnect");
@@ -419,7 +419,7 @@ btnCenterAll.addEventListener("click", () => {
 });
 
 // --- PID Analiz, HiDPI Grafik & Yerleşik Simülatör ---
-const MAX_HIST = 160;
+const MAX_RECORD = 6000; const VIEW_WIN = 160; let isRecording = false; let viewOffset = 0; let chartDragX = null;
 let pidHistory = [];
 let stepStart = null;
 let stepTarget = null;
@@ -464,10 +464,10 @@ setInterval(() => {
 }, 50);
 
 btnApplyPid.addEventListener("click", () => sendWs({ type: "pid", ...getPidParams() }));
-btnSaveFlash.addEventListener("click", () => sendWs({ type: "save_pid" }));
+btnSaveFlash.addEventListener("click", () => sendWs({ type: "save_pid"}));  btnRecStart.addEventListener("click", () => { isRecording = true; viewOffset = 0; recStatus.textContent = "Kayıt: Aktif"; recStatus.className = "mini-status ok"; }); btnRecStop.addEventListener("click", () => { isRecording = false; recStatus.textContent = "Durduruldu (" + pidHistory.length + " örnek — Kaydırarak incele)"; recStatus.className = "mini-status"; });
 
 function triggerStep(delta) {
-  pidHistory = [];
+  pidHistory = []; isRecording = true; viewOffset = 0;
   stepTarget = null;
   stepStart = null;
   stepPeak = 0;
@@ -488,7 +488,7 @@ btnStepTest.addEventListener("click", () => triggerStep(30));
 btnStepTestNeg.addEventListener("click", () => triggerStep(-30));
 btnClearPlot.addEventListener("click", () => {
   pidHistory = [];
-  stepTarget = null;
+  stepTarget = null; viewOffset = 0; recStatus.textContent = "Kayıt: Beklemede"; recStatus.className = "mini-status";
   pidRiseEl.textContent = "—";
   pidSettleEl.textContent = "—";
   drawPidChart();
@@ -554,8 +554,8 @@ function onTelemetry(t) {
     settleCandidateTime = null;
   }
 
-  pidHistory.push({ t: Math.round(now), sp: t.sp, act: t.act, err: t.err, out: t.out });
-  if (pidHistory.length > MAX_HIST) pidHistory.shift();
+  if (isRecording) { pidHistory.push({ t: Math.round(now), sp: t.sp, act: t.act, err: t.err, out: t.out });
+  if (pidHistory.length > MAX_RECORD) pidHistory.shift(); recStatus.textContent = "Kayıt: " + pidHistory.length + " örnek"; }
   drawPidChart();
 }
 
@@ -593,13 +593,13 @@ function drawPidChart() {
   pidCtx.fillText("PWM", 4, botTop + 12);
 
   if (pidHistory.length < 2) return;
-
+ const toplam = pidHistory.length; const endIdx = Math.max(0, toplam - viewOffset); const startIdx = Math.max(0, endIdx - VIEW_WIN); const slice = pidHistory.slice(startIdx, endIdx); if (slice.length < 2) return;
   const plotLine = (key, color, minV, maxV, yTop, yBot) => {
     pidCtx.strokeStyle = color;
     pidCtx.lineWidth = 2;
     pidCtx.beginPath();
-    pidHistory.forEach((p, i) => {
-      const x = padL + (i / (MAX_HIST - 1)) * plotW;
+    slice.forEach((p, i) => {
+      const x = padL + (i / (VIEW_WIN - 1)) * plotW;
       const norm = clamp((p[key] - minV) / (maxV - minV), 0, 1);
       const y = yBot - norm * (yBot - yTop);
       if (i === 0) pidCtx.moveTo(x, y);
@@ -613,7 +613,7 @@ function drawPidChart() {
   plotLine("err", "#f59e0b", -90, 90, botTop, h - 8);
   plotLine("out", "#ef4444", -255, 255, botTop, h - 8);
 }
-window.addEventListener("resize", drawPidChart);
+window.addEventListener("resize", drawPidChart); pidChart.addEventListener("pointerdown", (e) => { if (!isRecording && pidHistory.length > VIEW_WIN) { chartDragX = e.clientX; pidChart.style.cursor = "grabbing"; } }); pidChart.addEventListener("pointermove", (e) => { if (chartDragX === null || isRecording || pidHistory.length <= VIEW_WIN) return; const dx = e.clientX - chartDragX; chartDragX = e.clientX; const step = Math.round(dx * (VIEW_WIN / (pidChart.clientWidth || 300))); viewOffset = clamp(viewOffset + step, 0, pidHistory.length - VIEW_WIN); drawPidChart(); }); const endChartDrag = () => { chartDragX = null; pidChart.style.cursor = "grab"; }; pidChart.addEventListener("pointerup", endChartDrag); pidChart.addEventListener("pointercancel", endChartDrag);
 
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 function dist(a, b) { return Math.hypot(b.x - a.x, b.y - a.y, b.z - a.z); }
