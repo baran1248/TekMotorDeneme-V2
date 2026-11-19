@@ -68,7 +68,7 @@ const btnSaveFlash = document.getElementById("btnSaveFlash");
 const btnStepTest = document.getElementById("btnStepTest");
 const btnStepTestNeg = document.getElementById("btnStepTestNeg");
 const btnExportCsv = document.getElementById("btnExportCsv");
-const btnClearPlot = document.getElementById("btnCl const btnRecStart = document.getElementById("btnRecStart"); const btnRecStop = document.getElementById("btnRecStop"); const recStatus = document.getElementById("recStatus");earPlot");
+const btnClearPlot = document.getElementById("btnClearPlot"); const btnRecStart = document.getElementById("btnRecStart"); const btnRecStop = document.getElementById("btnRecStop"); const recStatus = document.getElementById("recStatus");
 
 const wsUrlInput = document.getElementById("wsUrlInput");
 const chkAutoReconnect = document.getElementById("chkAutoReconnect");
@@ -467,7 +467,7 @@ btnApplyPid.addEventListener("click", () => sendWs({ type: "pid", ...getPidParam
 btnSaveFlash.addEventListener("click", () => sendWs({ type: "save_pid"}));  btnRecStart.addEventListener("click", () => { isRecording = true; viewOffset = 0; recStatus.textContent = "Kayıt: Aktif"; recStatus.className = "mini-status ok"; }); btnRecStop.addEventListener("click", () => { isRecording = false; recStatus.textContent = "Durduruldu (" + pidHistory.length + " örnek — Kaydırarak incele)"; recStatus.className = "mini-status"; });
 
 function triggerStep(delta) {
-  pidHistory = []; isRecording = true; viewOffset = 0;
+  pidHistory = []; isRecording = true; viewOffset = 0; recStatus.textContent = "Kayıt: Aktif"; recStatus.className = "mini-status ok";
   stepTarget = null;
   stepStart = null;
   stepPeak = 0;
