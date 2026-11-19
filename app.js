@@ -193,17 +193,6 @@ function drawTouchOverlay(curr) {
   const cx = curr.x - rect.left;
   const cy = curr.y - rect.top;
 
-  // Kilitli eksen çizgisi
-  if (touchDir) {
-    touchCtx.strokeStyle = "rgba(56, 189, 248, 0.35)";
-    touchCtx.setLineDash([5, 5]);
-    touchCtx.lineWidth = 2;
-    touchCtx.beginPath();
-    touchCtx.moveTo(sx - touchDir.x * 240, sy - touchDir.y * 240);
-    touchCtx.lineTo(sx + touchDir.x * 240, sy + touchDir.y * 240);
-    touchCtx.stroke();
-    touchCtx.setLineDash([]);
-  }
 
   // Başlangıç -> parmak çizgisi
   touchCtx.strokeStyle = "#38bdf8";
@@ -242,18 +231,9 @@ touchPad.addEventListener("pointerdown", (e) => {
 
 touchPad.addEventListener("pointermove", (e) => {
   if (!touchPrev) return;
-  if (!touchDir) {
-    const d = Math.hypot(e.clientX - touchStart.x, e.clientY - touchStart.y);
-    if (d >= 8) {
-      touchDir = { x: (e.clientX - touchStart.x) / d, y: (e.clientY - touchStart.y) / d };
-    }
-  }
-  if (touchDir) {
     const dx = e.clientX - touchPrev.x;
-    const dy = e.clientY - touchPrev.y;
-    const proj = dx * touchDir.x + dy * touchDir.y;
     const boxW = touchPad.clientWidth || 360;
-    let delta = proj * (180 / boxW) * (saved.touchSens || 0.5) * saved.gain;
+    let delta = dx * (180 / boxW) * (saved.touchSens || 0.5) * saved.gain;
     if (saved.invert) delta = -delta;
     smoothedAngle = clamp(smoothedAngle + delta, -180, 180);
     slewedAngle = smoothedAngle;
@@ -265,7 +245,6 @@ touchPad.addEventListener("pointermove", (e) => {
       lastSentAngle = slewedAngle;
       lastSendTime = now;
     }
-  }
   touchPrev = { x: e.clientX, y: e.clientY };
   drawTouchOverlay(touchPrev);
 });
