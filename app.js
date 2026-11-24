@@ -467,7 +467,7 @@ btnApplyPid.addEventListener("click", () => sendWs({ type: "pid", ...getPidParam
 btnSaveFlash.addEventListener("click", () => sendWs({ type: "save_pid"}));  btnRecStart.addEventListener("click", () => { isRecording = true; viewOffset = 0; recStatus.textContent = "Kayıt: Aktif"; recStatus.className = "mini-status ok"; }); btnRecStop.addEventListener("click", () => { isRecording = false; recStatus.textContent = "Durduruldu (" + pidHistory.length + " örnek — Kaydırarak incele)"; recStatus.className = "mini-status"; });
 
 function triggerStep(delta) {
-  pidHistory = []; isRecording = true; viewOffset = 0; recStatus.textContent = "Kayıt: Aktif"; recStatus.className = "mini-status ok";
+  isRecording = true; viewOffset = 0; recStatus.textContent = "Kayıt: Aktif"; recStatus.className = "mini-status ok";
   stepTarget = null;
   stepStart = null;
   stepPeak = 0;
