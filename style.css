@@ -230,7 +230,7 @@ video, canvas#overlay {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
-@media (min-width: 600px) { .pid-metrics.pid-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (min-width: 600px) { .pid-metrics.pid-6 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 .gauge {
   background: var(--bg);
@@ -258,6 +258,7 @@ video, canvas#overlay {
   color: var(--muted);
 }
 .mini-status.ok { background: #14532d; color: #86efac; }
+.mini-status.warn { background: #451a03; color: #fde68a; border: 1px solid #f59e0b55; }
 
 .sliders, .manual-sliders { display: flex; flex-direction: column; gap: 10px; }
 .manual-sliders { background: var(--bg); padding: 10px; border-radius: 10px; }
