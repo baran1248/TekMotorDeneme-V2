@@ -24,6 +24,8 @@ const btnEstop = document.getElementById("btnEstop");
 const handStatus = document.getElementById("handStatus");
 const fpsLabel = document.getElementById("fpsLabel");
 const handBadge = document.getElementById("handBadge");
+const holdStateBadge = document.getElementById("holdStateBadge"); const valHoldDuty = document.getElementById("valHoldDuty"); const holdDutyBar = document.getElementById("holdDutyBar"); const holdDisturbText = document.getElementById("holdDisturbText");
+const btnHoldLock = document.getElementById("btnHoldLock"); const btnHoldFree = document.getElementById("btnHoldFree"); const pidDutyEl = document.getElementById("pidDuty"); const pidStateEl = document.getElementById("pidState");
 
 const btnStartCam = document.getElementById("btnStartCam");
 const btnFlipCam = document.getElementById("btnFlipCam");
@@ -504,13 +506,15 @@ btnExportCsv.addEventListener("click", () => {
   a.download = "tekmotor_v2_pid.csv";
   a.click();
 });
+btnHoldLock.addEventListener("click", () => sendWs({ type: "hold", enable: true })); btnHoldFree.addEventListener("click", () => sendWs({ type: "hold", enable: false }));
 
 function onTelemetry(t) {
   const now = performance.now();
   pidSpEl.textContent = `${Number(t.sp).toFixed(1)}°`;
   pidActEl.textContent = `${Number(t.act).toFixed(1)}°`;
   pidErrEl.textContent = `${Number(t.err).toFixed(1)}°`;
-
+  const dutyPct = t.duty !== undefined ? Math.abs(Number(t.duty)) : Math.abs((Number(t.out) / 255) * 100); const signedDuty = t.duty !== undefined ? Number(t.duty) : (Number(t.out) / 255) * 100; valHoldDuty.textContent = signedDuty.toFixed(1) + "%"; holdDutyBar.style.width = Math.min(100, dutyPct).toFixed(0) + "%"; pidDutyEl.textContent = signedDuty.toFixed(1) + "%";
+  if (t.state !== undefined) { pidStateEl.textContent = t.state; holdStateBadge.textContent = t.state === "HOLD" ? "HOLD (Direniyor!)" : t.state; holdStateBadge.className = t.state === "HOLD" ? "mini-status warn" : (t.state === "IDLE" ? "mini-status ok" : "mini-status"); } if (t.disturb !== undefined || t.hold !== undefined) { holdDisturbText.textContent = "Dış müdahale: " + (t.disturb ?? 0) + " | Bekçi: " + (t.hold ? "AÇIK" : "KAPALI"); }
   if (stepTarget === null) {
     stepTarget = t.sp;
     stepStart = t.act;
