@@ -75,7 +75,11 @@
               <small id="openPctText">Konum: %50</small>
             </div>
           </div>
-
+                <div class="card">
+           <h3>Dış Müdahale &amp; Harcanan Güç <span class="mini-status" id="holdStateBadge">Bekleniyor</span></h3>
+          <div class="single-gauge"><span>Harcanan Güç (Duty)</span><strong id="valHoldDuty">0.0%</strong><div class="bar-track"><div class="bar-fill" id="holdDutyBar" style="width:0%; background:#f59e0b"></div></div><small id="holdDisturbText">Dış müdahale: 0 | Bekçi: —</small></div>
+          <div class="controls-row" style="margin-top:8px"><button id="btnHoldLock" class="btn">Tut (Bekçi Aç)</button><button id="btnHoldFree" class="btn">Boşa Al (Serbest)</button></div>
+        </div>
           <div class="card">
             <h3>Hareket Modu & Hızlı Kalibrasyon</h3>
             <label class="field-label" style="margin-bottom:8px">Algılama Modu
@@ -138,6 +142,8 @@
           <div class="gauge"><span>Aşım (OS)</span><strong id="pidOs">0.0%</strong></div>
           <div class="gauge"><span>Yükselme</span><strong id="pidRise">—</strong></div>
           <div class="gauge"><span>Yerleşme</span><strong id="pidSettle">—</strong></div>
+        <div class="gauge"><span>Güç (Duty)</span><strong id="pidDuty">0.0%</strong></div>
+           <div class="gauge"><span>Durum</span><strong id="pidState">—</strong></div>
         </div>
 
         <div class="chart-wrap">
